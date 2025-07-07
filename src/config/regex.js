@@ -16,10 +16,34 @@ const regexPatterns = {
    */
   email: /'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'/g,
 
-  // Add more regex patterns here as needed for other data types.
-  // For example:
-  // phoneNumber: /'\d{3}-\d{3}-\d{4}'/g,
-  // ipAddress: /'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'/g,
+  /**
+   * Regex to match dates in 'YYYY-MM-DD' format enclosed in single quotes.
+   * Example: '2023-10-26'
+   */
+  date: /'\d{4}-\d{2}-\d{2}'/g,
+
+  /**
+   * Regex to match datetimes in 'YYYY-MM-DD HH:MM:SS' format enclosed in single quotes.
+   * Example: '2023-10-26 14:30:00'
+   */
+  dateTime: /'\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}'/g,
+
+  /**
+   * Regex to match phone numbers in common formats (e.g., 'XXX-XXX-XXXX') enclosed in single quotes.
+   */
+  phoneNumber: /'\d{3}-\d{3}-\d{4}'/g,
+
+  /**
+   * Regex to match IPv4 addresses enclosed in single quotes.
+   * Example: '192.168.1.1'
+   */
+  ipAddress: /'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'/g,
+
+  /**
+   * Regex to match 16-digit numbers (e.g., credit card numbers) enclosed in single quotes.
+   * This is a generic pattern and might match other 16-digit numbers.
+   */
+  creditCardNumber: /'\d{16}'/g,
 };
 
 module.exports = regexPatterns;
