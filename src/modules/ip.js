@@ -4,7 +4,9 @@ class IpGenerator {
    * @returns {string} A random IPv4 address.
    */
   randomIp() {
-    return Array.from({ length: 4 }, () => Math.floor(Math.random() * 256)).join('.');
+    return Array.from({ length: 4 }, () =>
+      Math.floor(Math.random() * 256),
+    ).join('.');
   }
 }
 

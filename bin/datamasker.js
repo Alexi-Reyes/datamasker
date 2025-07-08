@@ -42,38 +42,44 @@ yargs(process.argv.slice(2))
 
         // Anonymize names
         anonymizedData = anonymizedData.replace(regexPatterns.fullName, () => {
-          return `'${DataMasker.person.fullName()}'`;
+          return DataMasker.person.fullName();
         });
 
         // Anonymize emails
         anonymizedData = anonymizedData.replace(regexPatterns.email, () => {
-          return `'${DataMasker.mail.randomEmail()}'`;
+          return DataMasker.mail.randomEmail();
         });
 
         // Anonymize dates
         anonymizedData = anonymizedData.replace(regexPatterns.date, () => {
-          return `'${DataMasker.date.randomDate()}'`;
+          return DataMasker.date.randomDate();
         });
 
         // Anonymize datetimes
         anonymizedData = anonymizedData.replace(regexPatterns.dateTime, () => {
-          return `'${DataMasker.date.randomDateTime()}'`;
+          return DataMasker.date.randomDateTime();
         });
 
         // Anonymize phone numbers
-        anonymizedData = anonymizedData.replace(regexPatterns.phoneNumber, () => {
-          return `'${DataMasker.phone.randomNumber()}'`;
-        });
+        anonymizedData = anonymizedData.replace(
+          regexPatterns.phoneNumber,
+          () => {
+            return DataMasker.phone.randomNumber();
+          },
+        );
 
         // Anonymize IP addresses
         anonymizedData = anonymizedData.replace(regexPatterns.ipAddress, () => {
-          return `'${DataMasker.ip.randomIp()}'`;
+          return DataMasker.ip.randomIp();
         });
 
         // Anonymize credit card numbers
-        anonymizedData = anonymizedData.replace(regexPatterns.creditCardNumber, () => {
-          return `'${DataMasker.creditCard.randomNumber()}'`;
-        });
+        anonymizedData = anonymizedData.replace(
+          regexPatterns.creditCardNumber,
+          () => {
+            return DataMasker.creditCard.randomNumber();
+          },
+        );
 
         const finalOutputPath = outputFile
           ? path.resolve(process.cwd(), outputFile)
