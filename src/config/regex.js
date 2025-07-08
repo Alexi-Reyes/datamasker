@@ -14,7 +14,7 @@ const regexPatterns = {
    * Example: 'john.doe@example.com' or john.doe@example.com
    * This pattern covers a wide range of valid email formats.
    */
-  email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
+  email: /'([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})'/g,
 
   /**
    * Regex to match dates in 'YYYY-MM-DD' format.
