@@ -26,6 +26,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Commit package-lock.json if changed
+        run: |
+          if git diff --exit-code package-lock.json; then
+            echo "package-lock.json is clean, no commit needed."
+          else
+            git add package-lock.json
+            git commit -m "Update package-lock.json"
+          fi
+
       - name: Configure Git User
         run: |
           git config user.name "github-actions[bot]"
