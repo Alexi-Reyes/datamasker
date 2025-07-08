@@ -46,9 +46,12 @@ yargs(process.argv.slice(2))
         });
 
         // Anonymize emails
-        anonymizedData = anonymizedData.replace(regexPatterns.email, () => {
-          return DataMasker.mail.randomEmail();
-        });
+        anonymizedData = anonymizedData.replace(
+          regexPatterns.email,
+          (_match, _emailContent) => {
+            return `'${DataMasker.mail.randomEmail()}'`;
+          },
+        );
 
         // Anonymize dates
         anonymizedData = anonymizedData.replace(regexPatterns.date, () => {
@@ -81,20 +84,20 @@ yargs(process.argv.slice(2))
           },
         );
 
-        const finalOutputPath = outputFile
-          ? path.resolve(process.cwd(), outputFile)
-          : inputFilePath;
-
-        fs.writeFile(finalOutputPath, anonymizedData, 'utf8', (writeErr) => {
-          if (writeErr) {
-            console.error(
-              `Error writing to file ${finalOutputPath}:`,
-              writeErr,
-            );
-            process.exit(1);
-          }
-          console.log(`Anonymized data written to ${finalOutputPath}`);
-        });
+        if (outputFile) {
+          const finalOutputPath = path.resolve(process.cwd(), outputFile);
+          fs.writeFile(finalOutputPath, anonymizedData, 'utf8', (writeErr) => {
+            if (writeErr) {
+              console.error(
+                `Error writing to file ${finalOutputPath}:`,
+                writeErr,
+              );
+              process.exit(1);
+            }
+          });
+        } else {
+          console.log(anonymizedData);
+        }
       });
     },
   })

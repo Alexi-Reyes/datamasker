@@ -16,6 +16,35 @@ class Mail {
     const domain = domains[Math.floor(Math.random() * domains.length)];
     return `${first}.${last}@${domain}`;
   }
+
+  maskMail(email) {
+    if (!email || typeof email !== 'string') {
+      return '';
+    }
+
+    // Use a local regex for masking plain email strings
+    const plainEmailRegex =
+      /^([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/;
+    const match = email.match(plainEmailRegex);
+
+    if (!match) {
+      return '';
+    }
+
+    const [, localPart, domainPart] = match;
+
+    const maskedLocalPart = localPart
+      .split('.')
+      .map((part) => {
+        if (part.length <= 1) {
+          return '*';
+        }
+        return part.charAt(0) + '*'.repeat(part.length - 1);
+      })
+      .join('.');
+
+    return `${maskedLocalPart}@${domainPart}`;
+  }
 }
 
 module.exports = Mail;
