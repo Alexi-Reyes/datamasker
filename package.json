@@ -1,6 +1,6 @@
 {
   "name": "datamasker",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "A JavaScript anonymisation library.",
   "main": "src/index.js",
   "bin": {
