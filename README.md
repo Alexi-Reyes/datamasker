@@ -35,58 +35,83 @@ npm install datamasker
 **Anonymisation d’un fichier SQL en remplaçant directement le fichier d’origine :**
 
 ```bash
-node bin/datamasker.js anonymize test/test.sql
+node bin/datamasker.js anonymize example.sql
 ```
 
-👉 Cette commande modifie le fichier `test/test.sql` en place avec des données masquées.
+👉 Cette commande modifie le fichier `example.sql` en place avec des données masquées.
 
 ---
 
 **Anonymisation d’un fichier SQL en créant un nouveau fichier de sortie (exemple test/test.masked.sql) :**
 
 ```bash
-node bin/datamasker.js anonymize test/test.sql -o test/test.masked.sql
+node bin/datamasker.js anonymize example.sql -o example.masked.sql
 ```
 
 👉 Cette commande génère un nouveau fichier contenant les données masquées, sans modifier le fichier d’origine.
 
-### Exemple 2 : Masquage dans un fichier SQL
+### Exemple 2 : Anonymisation de colonnes spécifiques via la bibliothèque
+
+Utilisez la méthode `anonymizeSql` pour anonymiser des colonnes spécifiques en mappant les noms de colonnes (insensibles à la casse) aux méthodes de masquage souhaitées.
 
 ```javascript
 const fs = require('fs');
-const masker = require('datamasker');
-const regex = require('./config/regex'); // chemin vers regex.js
+const path = require('path');
+const DataMasker = require('datamasker');
 
-let sql = fs.readFileSync('test.sql', 'utf-8');
+const inputFilePath = path.resolve(__dirname, 'example.sql');
 
-sql = sql.replace(regex.email, () => `'${masker.mail.randomEmail()}'`);
-sql = sql.replace(regex.fullName, () => `'${masker.person.fullName()}'`);
-sql = sql.replace(regex.date, () => `'${masker.date.randomDate()}'`);
-sql = sql.replace(regex.phoneNumber, () => `'${masker.phone.randomNumber()}'`);
-sql = sql.replace(regex.ipAddress, () => `'${masker.ip.randomIp()}'`);
-sql = sql.replace(
-  regex.creditCardNumber,
-  () => `'${masker.creditCard.randomNumber()}'`,
-);
+fs.readFile(inputFilePath, 'utf8', (err, data) => {
+  if (err) {
+    console.error(`Erreur lors de la lecture du fichier ${inputFilePath}:`, err);
+    return;
+  }
 
-fs.writeFileSync('masked.sql', sql);
+  // Anonymiser des colonnes spécifiques : passez un objet mappant les noms de colonnes (insensibles à la majuscule)
+  // au chemin de la méthode DataMasker souhaitée (par exemple, 'person.fullName', 'mail.randomEmail').
+  // Exemple : anonymiser 'name' avec un nom complet aléatoire et 'email' avec un email aléatoire.
+  const columnAnonymizationMap = {
+    name: 'person.fullName',
+    email: 'mail.randomEmail',
+    // Ajoutez d'autres colonnes et leurs méthodes d'anonymisation souhaitées ici :
+    // dob: 'date.randomDate',
+    // phone: 'phone.randomNumber',
+    // ip_address: 'ip.randomIp',
+    // credit_card: 'creditCard.randomNumber',
+    // Si vous avez une colonne de texte générique, vous pouvez utiliser :
+    // text: 'person.fullName'
+  };
+  const anonymizedData = DataMasker.anonymizeSql(data, columnAnonymizationMap);
+  console.log('Contenu SQL anonymisé :\n', anonymizedData);
+
+  // Optionnel : Écrire dans un fichier de sortie
+  // const outputFilePath = path.resolve(__dirname, 'anonymized_example.sql');
+  // fs.writeFile(outputFilePath, anonymizedData, 'utf8', (writeErr) => {
+  //   if (writeErr) {
+  //     console.error(`Erreur lors de l'écriture dans le fichier ${outputFilePath}:`, writeErr);
+  //     return;
+  //   }
+  //   console.log(`Contenu anonymisé écrit dans ${outputFilePath}`);
+  // });
+});
 ```
+
 
 ### Exemple 3 – Génération de données aléatoires en console
 
 ```js
 const DataMasker = require('datamasker');
 
-console.log('Generated Name:', DataMasker.person.fullName());
-console.log('Generated First Name:', DataMasker.person.firstName());
-console.log('Generated Last Name:', DataMasker.person.lastName());
-console.log('Generated Mail:', DataMasker.mail.randomEmail());
-console.log('Generated Date:', DataMasker.date.randomDate());
-console.log('Generated DateTime:', DataMasker.date.randomDateTime());
-console.log('Generated Phone Number:', DataMasker.phone.randomNumber());
-console.log('Generated IP Address:', DataMasker.ip.randomIp());
+console.log('Nom généré :', DataMasker.person.fullName());
+console.log('Prénom généré :', DataMasker.person.firstName());
+console.log('Nom de famille généré :', DataMasker.person.lastName());
+console.log('Email généré :', DataMasker.mail.randomEmail());
+console.log('Date générée :', DataMasker.date.randomDate());
+console.log('Date et heure générées :', DataMasker.date.randomDateTime());
+console.log('Numéro de téléphone généré :', DataMasker.phone.randomNumber());
+console.log('Adresse IP générée :', DataMasker.ip.randomIp());
 console.log(
-  'Generated Credit Card Number:',
+  'Numéro de carte de crédit généré :',
   DataMasker.creditCard.randomNumber(),
 );
 ```
@@ -127,21 +152,38 @@ Lignes directrices :
 
 ## 🧪 Tests
 
-Cette section est en cours de développement. N’hésitez pas à contribuer en ajoutant des tests unitaires.
+Les tests unitaires sont écrits avec Jest. Pour les exécuter :
+
+```bash
+npm test
+```
+
+Les tests couvrent actuellement :
+- L'interface en ligne de commande (`test/cli.test.js`)
+- Le module de génération d'emails (`test/mail.test.js`)
 
 ## 📁 Structure du projet
 
 ```
 ├── src/
-│   ├── index.js               # Point d’entrée
-│   └── modules/               # Générateurs de données (email, nom, etc.)
-├── config/
-│   └── regex.js               # Expressions régulières utilisées pour le masquage
+│   ├── anonymizer.js          # Logique d'anonymisation
+│   ├── index.js               # Point d’entrée de la bibliothèque
+│   ├── config/
+│   │   └── regex.js           # Expressions régulières utilisées pour le masquage
+│   └── modules/               # Générateurs de données
+│       ├── creditCard.js      # Génération de numéros de cartes de crédit
+│       ├── date.js            # Génération de dates et heures
+│       ├── ip.js              # Génération d'adresses IP
+│       ├── mail.js            # Génération d'adresses email
+│       ├── person.js          # Génération de noms et prénoms
+│       └── phone.js           # Génération de numéros de téléphone
 ├── bin/
-│   └── datamasker.js          # CLI
+│   └── datamasker.js          # Script CLI principal
 ├── test/
-│   └── test.sql               # Fichier de test
-└── example.js                 # Exemple de génération en console
+│   ├── cli.test.js            # Tests pour l'interface en ligne de commande
+│   └── mail.test.js           # Tests pour le module de mail
+├── example.js                 # Exemple d'utilisation de la bibliothèque
+└── example.sql                # Fichier SQL d'exemple pour le masquage
 ```
 
 ## 📄 Licence
