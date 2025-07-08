@@ -2,7 +2,7 @@ name: Publish Package
 
 on:
   workflow_run:
-    workflows: ["Lint and Format", "Tests"]
+    workflows: ['Lint and Format', 'Tests']
     types:
       - completed
 
@@ -33,7 +33,6 @@ jobs:
 
       - name: Increment version and create tag
         run: npm version patch
-
 
       - name: Publish package
         run: npm publish
