@@ -4,6 +4,7 @@ const DateGenerator = require('./modules/date');
 const PhoneGenerator = require('./modules/phone');
 const IpGenerator = require('./modules/ip');
 const CreditCardGenerator = require('./modules/creditCard');
+const anonymizeSqlContent = require('./anonymizer'); // Import the anonymizer function
 
 class DataMasker {
   constructor() {
@@ -16,4 +17,8 @@ class DataMasker {
   }
 }
 
-module.exports = new DataMasker();
+const dataMaskerInstance = new DataMasker();
+dataMaskerInstance.anonymizeSql = (sqlContent, columnAnonymizationMap) =>
+  anonymizeSqlContent(dataMaskerInstance, sqlContent, columnAnonymizationMap);
+
+module.exports = dataMaskerInstance;
