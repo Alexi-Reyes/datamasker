@@ -34,8 +34,6 @@ jobs:
       - name: Increment version and create tag
         run: npm version patch
 
-      - name: Push new tag
-        run: git push origin --tags
 
       - name: Publish package
         run: npm publish
