@@ -9,7 +9,11 @@ const regexPatterns = require('./config/regex');
  *                                            If empty, all recognized patterns will be anonymized globally.
  * @returns {string} The anonymized SQL content.
  */
-function anonymizeSqlContent(DataMaskerInstance, sqlContent, columnAnonymizationMap = {}) {
+function anonymizeSqlContent(
+  DataMaskerInstance,
+  sqlContent,
+  columnAnonymizationMap = {},
+) {
   let anonymizedData = sqlContent;
 
   /**
@@ -26,12 +30,15 @@ function anonymizeSqlContent(DataMaskerInstance, sqlContent, columnAnonymization
     for (let i = 0; i < parts.length; i++) {
       const part = parts[i];
       if (method && typeof method === 'object' && part in method) {
-        if (i < parts.length - 1) { // If not the last part, update context
+        if (i < parts.length - 1) {
+          // If not the last part, update context
           context = method[part];
         }
         method = method[part];
       } else {
-        console.warn(`Anonymization method not found: ${anonymizationMethodPath}. Returning original value.`);
+        console.warn(
+          `Anonymization method not found: ${anonymizationMethodPath}. Returning original value.`,
+        );
         return value;
       }
     }
@@ -39,7 +46,9 @@ function anonymizeSqlContent(DataMaskerInstance, sqlContent, columnAnonymization
     if (typeof method === 'function') {
       return method.call(context); // Call method with correct 'this' context, returns raw value
     } else {
-      console.warn(`Anonymization method is not a function: ${anonymizationMethodPath}. Returning original value.`);
+      console.warn(
+        `Anonymization method is not a function: ${anonymizationMethodPath}. Returning original value.`,
+      );
       return value;
     }
   }
@@ -70,12 +79,9 @@ function anonymizeSqlContent(DataMaskerInstance, sqlContent, columnAnonymization
     });
 
     // Anonymize phone numbers
-    anonymizedData = anonymizedData.replace(
-      regexPatterns.phoneNumber,
-      () => {
-        return DataMaskerInstance.phone.randomNumber();
-      },
-    );
+    anonymizedData = anonymizedData.replace(regexPatterns.phoneNumber, () => {
+      return DataMaskerInstance.phone.randomNumber();
+    });
 
     // Anonymize IP addresses
     anonymizedData = anonymizedData.replace(regexPatterns.ipAddress, () => {
@@ -95,25 +101,38 @@ function anonymizeSqlContent(DataMaskerInstance, sqlContent, columnAnonymization
 
   // Regex to find INSERT statements and capture column names and values
   // This regex is simplified and may not handle all SQL complexities.
-  const insertRegex = /(INSERT INTO\s+\S+\s*)\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)/gi;
+  const insertRegex =
+    /(INSERT INTO\s+\S+\s*)\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)/gi;
 
-  anonymizedData = anonymizedData.replace(insertRegex, (match, prefix, colsStr, valsStr) => {
-    const columnNames = colsStr.split(',').map(col => col.trim().toLowerCase());
-    const values = parseValuesString(valsStr);
+  anonymizedData = anonymizedData.replace(
+    insertRegex,
+    (match, prefix, colsStr, valsStr) => {
+      const columnNames = colsStr
+        .split(',')
+        .map((col) => col.trim().toLowerCase());
+      const values = parseValuesString(valsStr);
 
-    const anonymizedValues = values.map((valInfo, index) => {
-      const colName = columnNames[index];
-      const anonymizationMethodPath = columnAnonymizationMap[colName];
+      const anonymizedValues = values.map((valInfo, index) => {
+        const colName = columnNames[index];
+        const anonymizationMethodPath = columnAnonymizationMap[colName];
 
-      if (anonymizationMethodPath) {
-        // Anonymize the value, applyAnonymizationToValue returns raw value
-        return { value: applyAnonymizationToValue(valInfo.value, anonymizationMethodPath), isQuoted: valInfo.isQuoted, isNull: valInfo.isNull };
-      }
-      return valInfo; // Return original value info if not anonymized
-    });
+        if (anonymizationMethodPath) {
+          // Anonymize the value, applyAnonymizationToValue returns raw value
+          return {
+            value: applyAnonymizationToValue(
+              valInfo.value,
+              anonymizationMethodPath,
+            ),
+            isQuoted: valInfo.isQuoted,
+            isNull: valInfo.isNull,
+          };
+        }
+        return valInfo; // Return original value info if not anonymized
+      });
 
-    return `${prefix}(${colsStr}) VALUES (${formatValuesString(anonymizedValues)})`;
-  });
+      return `${prefix}(${colsStr}) VALUES (${formatValuesString(anonymizedValues)})`;
+    },
+  );
 
   return anonymizedData;
 }
@@ -127,7 +146,6 @@ function anonymizeSqlContent(DataMaskerInstance, sqlContent, columnAnonymization
  */
 function parseValuesString(valsStr) {
   const values = [];
-  let currentVal = '';
   let inQuote = false;
   let start = 0;
 
@@ -159,17 +177,22 @@ function parseValuesString(valsStr) {
  * @returns {string} A comma-separated string of formatted values.
  */
 function formatValuesString(values) {
-  return values.map(valInfo => {
-    const val = valInfo.value;
-    if (valInfo.isNull) {
-      return 'NULL';
-    }
-    // If it was originally quoted, or if it's a string that isn't a number and isn't NULL
-    if (valInfo.isQuoted || (typeof val === 'string' && !/^-?\d+(\.\d+)?$/.test(val))) {
-      return `'${val}'`;
-    }
-    return val;
-  }).join(', ');
+  return values
+    .map((valInfo) => {
+      const val = valInfo.value;
+      if (valInfo.isNull) {
+        return 'NULL';
+      }
+      // If it was originally quoted, or if it's a string that isn't a number and isn't NULL
+      if (
+        valInfo.isQuoted ||
+        (typeof val === 'string' && !/^-?\d+(\.\d+)?$/.test(val))
+      ) {
+        return `'${val}'`;
+      }
+      return val;
+    })
+    .join(', ');
 }
 
 module.exports = anonymizeSqlContent;

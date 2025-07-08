@@ -4,12 +4,12 @@
 ![Node.js CI](https://img.shields.io/github/actions/workflow/status/Alexi-Reyes/datamasker/node.js.yml?branch=main)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Datamasker** est une bibliothèque Node.js permettant d’anonymiser des données sensibles dans des fichiers SQL. 
-Elle détecte automatiquement noms, emails, dates, numéros de téléphone, IP et numéros de cartes bancaires pour les remplacer 
+**Datamasker** est une bibliothèque Node.js permettant d’anonymiser des données sensibles dans des fichiers SQL.
+Elle détecte automatiquement noms, emails, dates, numéros de téléphone, IP et numéros de cartes bancaires pour les remplacer
 par des valeurs réalistes générées dynamiquement.
 
 **Créateurs**  
-```Alexi Reyes - Hermione Tetard - Cynthia Apura```
+`Alexi Reyes - Hermione Tetard - Cynthia Apura`
 
 ---
 
@@ -37,14 +37,17 @@ npm install datamasker
 ```bash
 node bin/datamasker.js anonymize test/test.sql
 ```
-👉 Cette commande modifie le fichier ```test/test.sql``` en place avec des données masquées.
-___
+
+👉 Cette commande modifie le fichier `test/test.sql` en place avec des données masquées.
+
+---
 
 **Anonymisation d’un fichier SQL en créant un nouveau fichier de sortie (exemple test/test.masked.sql) :**
 
 ```bash
 node bin/datamasker.js anonymize test/test.sql -o test/test.masked.sql
 ```
+
 👉 Cette commande génère un nouveau fichier contenant les données masquées, sans modifier le fichier d’origine.
 
 ### Exemple 2 : Masquage dans un fichier SQL
@@ -61,11 +64,15 @@ sql = sql.replace(regex.fullName, () => `'${masker.person.fullName()}'`);
 sql = sql.replace(regex.date, () => `'${masker.date.randomDate()}'`);
 sql = sql.replace(regex.phoneNumber, () => `'${masker.phone.randomNumber()}'`);
 sql = sql.replace(regex.ipAddress, () => `'${masker.ip.randomIp()}'`);
-sql = sql.replace(regex.creditCardNumber, () => `'${masker.creditCard.randomNumber()}'`);
+sql = sql.replace(
+  regex.creditCardNumber,
+  () => `'${masker.creditCard.randomNumber()}'`,
+);
 
 fs.writeFileSync('masked.sql', sql);
 ```
-###  Exemple 3 – Génération de données aléatoires en console
+
+### Exemple 3 – Génération de données aléatoires en console
 
 ```js
 const DataMasker = require('datamasker');
@@ -78,7 +85,10 @@ console.log('Generated Date:', DataMasker.date.randomDate());
 console.log('Generated DateTime:', DataMasker.date.randomDateTime());
 console.log('Generated Phone Number:', DataMasker.phone.randomNumber());
 console.log('Generated IP Address:', DataMasker.ip.randomIp());
-console.log('Generated Credit Card Number:', DataMasker.creditCard.randomNumber());
+console.log(
+  'Generated Credit Card Number:',
+  DataMasker.creditCard.randomNumber(),
+);
 ```
 
 ## 🔧 Développement
@@ -89,7 +99,8 @@ Cloner le dépôt et installer les dépendances :
 git clone https://github.com/Alexi-Reyes/datamasker.git
 cd datamasker
 npm install
-``` 
+```
+
 🤝 Contribution
 
 Les contributions sont les bienvenues ! Vous pouvez :
