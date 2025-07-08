@@ -40,7 +40,19 @@ jobs:
             git commit -m "Update package-lock.json"
           fi
 
+      - name: Check if commit is tagged
+        id: check_tag
+        run: |
+          if git describe --exact-match --tags HEAD >/dev/null 2>&1; then
+            echo "Commit is already tagged. Skipping version increment and publish."
+            echo "SKIP=true" >> $GITHUB_ENV
+          else
+            echo "Commit is not tagged. Proceeding with version increment and publish."
+            echo "SKIP=false" >> $GITHUB_ENV
+          fi
+
       - name: Increment version and create tag
+        if: env.SKIP != 'true'
         run: npm version patch
         env:
           GIT_AUTHOR_NAME: "github-actions[bot]"
