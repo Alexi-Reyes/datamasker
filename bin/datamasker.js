@@ -50,6 +50,31 @@ yargs(process.argv.slice(2))
           return `'${DataMasker.mail.randomEmail()}'`;
         });
 
+        // Anonymize dates
+        anonymizedData = anonymizedData.replace(regexPatterns.date, () => {
+          return `'${DataMasker.date.randomDate()}'`;
+        });
+
+        // Anonymize datetimes
+        anonymizedData = anonymizedData.replace(regexPatterns.dateTime, () => {
+          return `'${DataMasker.date.randomDateTime()}'`;
+        });
+
+        // Anonymize phone numbers
+        anonymizedData = anonymizedData.replace(regexPatterns.phoneNumber, () => {
+          return `'${DataMasker.phone.randomNumber()}'`;
+        });
+
+        // Anonymize IP addresses
+        anonymizedData = anonymizedData.replace(regexPatterns.ipAddress, () => {
+          return `'${DataMasker.ip.randomIp()}'`;
+        });
+
+        // Anonymize credit card numbers
+        anonymizedData = anonymizedData.replace(regexPatterns.creditCardNumber, () => {
+          return `'${DataMasker.creditCard.randomNumber()}'`;
+        });
+
         const finalOutputPath = outputFile
           ? path.resolve(process.cwd(), outputFile)
           : inputFilePath;
