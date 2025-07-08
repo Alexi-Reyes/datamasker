@@ -30,25 +30,41 @@ npm install datamasker
 
 ## 🚀 Utilisation
 
-### Exemple 1 – En ligne de commande
+### Exemple 1 – En ligne de commande (CLI)
 
-**Anonymisation d’un fichier SQL en remplaçant directement le fichier d’origine :**
+La CLI de Datamasker permet d'anonymiser des fichiers SQL directement depuis votre terminal.
 
-```bash
-node bin/datamasker.js anonymize example.sql
-```
-
-👉 Cette commande modifie le fichier `example.sql` en place avec des données masquées.
-
----
-
-**Anonymisation d’un fichier SQL en créant un nouveau fichier de sortie (exemple test/test.masked.sql) :**
+#### Anonymisation d'un fichier SQL avec remplacement direct
 
 ```bash
-node bin/datamasker.js anonymize example.sql -o example.masked.sql
+datamasker anonymize <fichier_source>
 ```
 
-👉 Cette commande génère un nouveau fichier contenant les données masquées, sans modifier le fichier d’origine.
+**Exemple :**
+```bash
+datamasker anonymize example.sql
+```
+👉 Cette commande lit `example.sql`, anonymise son contenu et écrase le fichier original avec les données masquées.
+
+#### Anonymisation d'un fichier SQL vers un nouveau fichier de sortie
+
+```bash
+datamasker anonymize <fichier_source> -o <fichier_destination>
+```
+
+**Exemple :**
+```bash
+datamasker anonymize example.sql -o example.masked.sql
+```
+👉 Cette commande lit `example.sql`, anonymise son contenu et écrit le résultat dans `example.masked.sql` sans modifier le fichier original.
+
+#### Affichage de l'aide de la CLI
+
+Pour obtenir des informations sur les commandes disponibles et leurs options :
+
+```bash
+datamasker --help
+```
 
 ### Exemple 2 : Anonymisation de colonnes spécifiques via la bibliothèque
 
