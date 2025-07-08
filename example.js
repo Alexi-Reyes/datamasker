@@ -8,4 +8,7 @@ console.log('Generated Date:', DataMasker.date.randomDate());
 console.log('Generated DateTime:', DataMasker.date.randomDateTime());
 console.log('Generated Phone Number:', DataMasker.phone.randomNumber());
 console.log('Generated IP Address:', DataMasker.ip.randomIp());
-console.log('Generated Credit Card Number:', DataMasker.creditCard.randomNumber());
+console.log(
+  'Generated Credit Card Number:',
+  DataMasker.creditCard.randomNumber(),
+);
